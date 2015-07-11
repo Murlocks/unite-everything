@@ -7,7 +7,7 @@
 " Requirement: everything.exe
 "            : es.exe in $PATH
 " Notes: ディレクトリ等がジャンクションだったりすると everything が検索してくれない
-" License: MIT license  {{{
+" License: MIT license  
 "     Permission is hereby granted, free of charge, to any person obtaining
 "     a copy of this software and associated documentation files (the
 "     "Software"), to deal in the Software without restriction, including
@@ -26,10 +26,10 @@
 "     CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT,
 "     TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE
 "     SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
-" }}}
+" 
 "=============================================================================
 
-" Variables  "{{{
+" Variables  
 call unite#util#set_default('g:unite_source_everything_limit', 100)
 " search entire path
 call unite#util#set_default('g:unite_source_everything_full_path_search', 0)
@@ -46,7 +46,7 @@ call unite#util#set_default('g:unite_source_everything_ignore_pattern',
       \'\%(^\|/\)\.\.\?$\|\~$\|\.\%(git\|hg\|svn\)\|\.\%(o\|exe\|dll\|bak\|DS_Store\|pyc\|zwc\|sw[po]\)$')
 " minimum pattern length for asynchronous
 call unite#util#set_default('g:unite_source_everything_async_minimum_length', 3)
-"}}}
+
 
 let s:available_es = executable(g:unite_source_everything_cmd_path)
 
@@ -69,18 +69,18 @@ let s:source_async =
       \ , 'hooks' : {}
       \ }
 
-function! unite#sources#everything#define() "{{{
+function! unite#sources#everything#define() 
   let _ = []
-  if unite#util#is_windows() && s:available_es
+  if s:available_es
     call add(_, s:source)
     if unite#util#has_vimproc()
       call add(_, s:source_async)
     endif
   endif
   return _
-endfunction "}}}
+endfunction 
 
-function! s:source.change_candidates(args, context) "{{{
+function! s:source.change_candidates(args, context) 
   let input = substitute(a:context.input, '^\a\+:\zs\*/', '/', '')
   let path = substitute(a:context.path, '/', '\\\\', 'g')
   " exec es.exe to list candidates
@@ -89,7 +89,7 @@ function! s:source.change_candidates(args, context) "{{{
   let candidates = split(res, '\r\n\|\r\|\n')
 
   return s:build_candidates(candidates)
-endfunction "}}}
+endfunction 
 
 function! s:source.hooks.on_init(args, context)
   call s:on_init(s:source.name)
@@ -99,14 +99,14 @@ function! s:source_async.hooks.on_init(args, context)
   call s:on_init(s:source_async.name)
 endfunction
 
-function! s:source_async.hooks.on_close(args, context) "{{{
+function! s:source_async.hooks.on_close(args, context) 
   while !a:context.source__subproc.stdout.eof
     call a:context.source__subproc.stdout.read()
   endwhile
   call a:context.source__subproc.kill(9)
-endfunction "}}}
+endfunction 
 
-function! s:source_async.async_gather_candidates(args, context) "{{{
+function! s:source_async.async_gather_candidates(args, context) 
   let input = substitute(a:context.input, '^\a\+:\zs\*/', '/', '')
   let path = substitute(a:context.path, '/', '\\\\', 'g')
 
@@ -138,7 +138,7 @@ function! s:source_async.async_gather_candidates(args, context) "{{{
   let candidates = map(res, 'unite#util#substitute_path_separator(v:val)')
 
   return s:build_candidates(candidates)
-endfunction "}}}
+endfunction 
 
 function! s:es_command_line(input, path)
   return g:unite_source_everything_cmd_path
@@ -152,7 +152,7 @@ function! s:es_command_line(input, path)
   return cline
 endfunction
 
-function! s:build_candidates(candidate_list) "{{{
+function! s:build_candidates(candidate_list) 
   let dir_list = []
   let file_list = []
   for candidate in a:candidate_list
@@ -176,7 +176,7 @@ function! s:build_candidates(candidate_list) "{{{
   endfor
 
   return file_list + dir_list
-endfunction "}}}
+endfunction 
 
 function! s:check_everything_connection()
   let cmd = g:unite_source_everything_cmd_path . ' -n 0'
